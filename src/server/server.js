@@ -18,18 +18,7 @@ app.use(bodyParser.json());
 
 app.locals.serialize = serialize;
 
-if (config.isDev) {
-  app.locals.gVars = {
-    main: ['main.css', 'main.js'],
-    vendor: 'vendor.js',
-  };
-} else {
-  try {
-    app.locals.gVars = require('../../.reactful.json');
-  } catch (err) {
-    console.error('Reactful did not find Webpack generated assets');
-  }
-}
+
 
 app.get('/', async (req, res) => {
   try {
