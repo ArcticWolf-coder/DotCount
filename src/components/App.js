@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 const PickMe =(props)=>{
   return (
       <button key={props.count} className="number" style={{backgroundColor: colors[props.stat]}}
-      onClick={()=>console.log(props.count)}>
+      onClick={()=>props.onNum(props.count,props.stat)}>
       {props.count}</button>
   );
 }
@@ -21,8 +21,8 @@ const Dot=(props)=>{
 }
 const App = () => {
   const [dots,setDots] = useState(utils.random(1,9));
-  const [aNums, setANums] = useState(utils.range(1, 6)); //available
-  const [cNums, setCNums] = useState([2,3]); //candidate
+  const [aNums, setANums] = useState(utils.range(1, 9)); //available
+  const [cNums, setCNums] = useState([]); //candidate
   const wNum= utils.sum(cNums)> dots;
   const numState=(num)=>{
     if(!aNums.includes(num)) return 'used';
@@ -31,10 +31,30 @@ const App = () => {
     }
     return 'available';
   }
+  const onNumClick=(num,stat)=>{
+    if(stat==='used'){
+      return;
+    }
+    var newCandid;
+    if (stat==='available'){
+      newCandid=cNums.concat(num);
+    }else {
+      newCandid=cNums.filter(n=> !num);
+    }
+    if(utils.sum(newCandid)!==dots){
+      setCNums(newCandid);
+    }else {
+      const newAvail=aNums.filter(n=>!newCandid.includes(n));
+      setANums(newAvail);
+      setDots(utils.randomSumIn(newAvail,9));
+      setCNums([]);
+    }
+
+  }
   return (
     <div className="game">
       <div className="help">
-        Pick 1 or more numbers that sum to the number of stars
+        Pick 1 or more numbers that sum to the number of dotted stars
       </div>
       <div className="body">
         <div className="left">    
@@ -42,11 +62,11 @@ const App = () => {
         </div>
         <div className="right">
           {utils.range(1, 9).map(num =>
-            <PickMe count = {num} stat={numState(num)}/>
+            <PickMe count = {num} onNum={onNumClick} stat={numState(num)}/>
           )}
         </div>
       </div>
-      <div className="timer">Time Remaining: 10</div>
+      <div className="timer">Seconds Remaining: 10</div>
     </div>
   );
 };

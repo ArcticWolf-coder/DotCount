@@ -11,6 +11,12 @@
 body {
   color: var(--color-main);
 }
+header{
+  text-align: center;
+  padding: 10px;
+  font-style: bold;
+  font-size: 32px;
+}
 .game {
   max-width: 500px;
   margin: 0 auto;
@@ -67,7 +73,7 @@ body {
 .timer {
   color: #666;
   margin-top: 3px;
-  margin-left: 3px;
+  text-align: right;
 }
 
 .game-done .message {
