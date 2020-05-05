@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 
 
 // STAR MATCH - Starting Template
@@ -12,8 +12,8 @@ const PickMe =(props)=>{
 const PlayAgain=(props)=>{
   return(
     <div className="game-done">
-      <h4 ><strong>Game Over!</strong></h4>
-      <button onClick={props.restart}>Play Again</button>
+      <h4 ><strong>Game Over! Go again?"</strong></h4>
+      <button onClick={props.restart}>Play</button>
     </div>
   );
 }
@@ -27,14 +27,34 @@ const Dot=(props)=>{
   
   );
 }
+
+const Game=(props)=>{
+  
+    return (
+      props.gameStatus !=='active'?
+      <Play restart={props.restart}/>: <Dot no={props.no}/>
+    );
+}
 const App = () => {
   // State initialization
   const [dots,setDots] = useState(utils.random(1,9)); //total dots
   const [aNums, setANums] = useState(utils.range(1, 9)); //available
   const [cNums, setCNums] = useState([]); //candidate
+  const [secs,setSecs]=useState(15);
+
+  useEffect(()=>{
+    
+    
+      if(secs>0 && aNums.length>0){
+        const tid=setTimeout(()=>{setSecs(secs-1)},1000);
+        return ()=>clearTimeout(tid);
+      }
+    
+  });
   //Necessary computations based on state
   const wNum= utils.sum(cNums)> dots;
-  const gameOver= aNums.length===0;
+  const gameStatus= aNums.length==0? 'won': secs==0?'lost':'active';
+  
   const numState=(num)=>{
     if(!aNums.includes(num)) return 'used';
     if(cNums.includes(num)) {
@@ -46,9 +66,12 @@ const App = () => {
     setDots(utils.random(1,9));
     setANums(utils.range(1,9));
     setCNums([]);
+    setSecs(15);
+    
+
   };
   const onNumClick=(num,stat)=>{
-    if(stat==='used'){
+    if(stat==='used' || gameStatus!=='active'){
       return;
     }
     const newCandid=(stat==='available')?
@@ -61,6 +84,7 @@ const App = () => {
       setDots(utils.randomSumIn(newAvail,9));
       setANums(newAvail);
       setCNums([]);
+      
     }
 
   };
@@ -71,11 +95,13 @@ const App = () => {
         Pick 1 or more numbers that sum to the number of dotted stars
       </div>
       <div className="body">
+
         <div className="left">
-          { gameOver?
-          <PlayAgain restart={restart} /> 
+          { gameStatus!=='active'?
+          <PlayAgain restart={restart} gameStatus={gameStatus}/> 
           : <Dot no={dots} /> 
-          }  
+          }
+          
             
         </div>
         <div className="right">
@@ -84,7 +110,7 @@ const App = () => {
           )}
         </div>
       </div>
-      <div className="timer">Seconds Remaining: 10</div>
+          <div className="timer">Seconds Remaining: {secs}</div>
     </div>
   );
 };
