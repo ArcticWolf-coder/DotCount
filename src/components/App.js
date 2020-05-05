@@ -12,7 +12,7 @@ const PickMe =(props)=>{
 const PlayAgain=(props)=>{
   return(
     <div className="game-done">
-      <h4 ><strong>Game Over! Go again?"</strong></h4>
+      <h4 className="message"><strong>Game Over! Go again?"</strong></h4>
       <button onClick={props.restart}>Play</button>
     </div>
   );
@@ -28,14 +28,14 @@ const Dot=(props)=>{
   );
 }
 
-const Game=(props)=>{
-  
+const App=()=>{
+    const[id,setId]=useState(1);
+    const reset=()=>setId(id+1);
     return (
-      props.gameStatus !=='active'?
-      <Play restart={props.restart}/>: <Dot no={props.no}/>
+      <Game key={id} reset={reset}/>
     );
 }
-const App = () => {
+const Game = (props) => {
   // State initialization
   const [dots,setDots] = useState(utils.random(1,9)); //total dots
   const [aNums, setANums] = useState(utils.range(1, 9)); //available
@@ -98,7 +98,7 @@ const App = () => {
 
         <div className="left">
           { gameStatus!=='active'?
-          <PlayAgain restart={restart} gameStatus={gameStatus}/> 
+          <PlayAgain restart={props.reset} gameStatus={gameStatus}/> 
           : <Dot no={dots} /> 
           }
           

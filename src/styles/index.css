@@ -79,6 +79,7 @@ header{
 .game-done .message {
   font-size: 250%;
   font-weight: bold;
+  color:red;
   margin: 15px;
 }
 
