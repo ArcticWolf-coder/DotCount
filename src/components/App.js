@@ -9,6 +9,14 @@ const PickMe =(props)=>{
       {props.count}</button>
   );
 }
+const PlayAgain=(props)=>{
+  return(
+    <div className="game-done">
+      <h4 ><strong>Game Over!</strong></h4>
+      <button onClick={props.restart}>Play Again</button>
+    </div>
+  );
+}
 const Dot=(props)=>{
   return (
     <>
@@ -20,10 +28,13 @@ const Dot=(props)=>{
   );
 }
 const App = () => {
-  const [dots,setDots] = useState(utils.random(1,9));
+  // State initialization
+  const [dots,setDots] = useState(utils.random(1,9)); //total dots
   const [aNums, setANums] = useState(utils.range(1, 9)); //available
   const [cNums, setCNums] = useState([]); //candidate
+  //Necessary computations based on state
   const wNum= utils.sum(cNums)> dots;
+  const gameOver= aNums.length===0;
   const numState=(num)=>{
     if(!aNums.includes(num)) return 'used';
     if(cNums.includes(num)) {
@@ -31,34 +42,41 @@ const App = () => {
     }
     return 'available';
   }
+  const restart=()=>{
+    setDots(utils.random(1,9));
+    setANums(utils.range(1,9));
+    setCNums([]);
+  };
   const onNumClick=(num,stat)=>{
     if(stat==='used'){
       return;
     }
-    var newCandid;
-    if (stat==='available'){
-      newCandid=cNums.concat(num);
-    }else {
-      newCandid=cNums.filter(n=> !num);
-    }
+    const newCandid=(stat==='available')?
+    cNums.concat(num):cNums.filter(n=> n!==num);
+    
     if(utils.sum(newCandid)!==dots){
       setCNums(newCandid);
     }else {
       const newAvail=aNums.filter(n=>!newCandid.includes(n));
-      setANums(newAvail);
       setDots(utils.randomSumIn(newAvail,9));
+      setANums(newAvail);
       setCNums([]);
     }
 
-  }
+  };
+  //render return
   return (
     <div className="game">
       <div className="help">
         Pick 1 or more numbers that sum to the number of dotted stars
       </div>
       <div className="body">
-        <div className="left">    
-            <Dot no={dots} />
+        <div className="left">
+          { gameOver?
+          <PlayAgain restart={restart} /> 
+          : <Dot no={dots} /> 
+          }  
+            
         </div>
         <div className="right">
           {utils.range(1, 9).map(num =>
