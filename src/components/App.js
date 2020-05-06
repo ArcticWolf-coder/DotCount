@@ -1,90 +1,90 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 
 // STAR MATCH - Starting Template
-const PickMe =(props)=>{
+const PickMe = (props) => {
   return (
-      <button key={props.count} className="number" style={{backgroundColor: colors[props.stat]}}
-      onClick={()=>props.onNum(props.count,props.stat)}>
+    <button key={props.count} className="number" style={{ backgroundColor: colors[props.stat] }}
+      onClick={() => props.onNum(props.count, props.stat)}>
       {props.count}</button>
   );
 }
-const PlayAgain=(props)=>{
-  return(
+const PlayAgain = (props) => {
+  return (
     <div className="game-done">
       <h4 className="message"><strong>Game Over! Go again?"</strong></h4>
       <button onClick={props.restart}>Play</button>
     </div>
   );
 }
-const Dot=(props)=>{
+const Dot = (props) => {
   return (
     <>
-      {utils.range(1,props.no).map( id=> 
+      {utils.range(1, props.no).map(id =>
         <div key={id} className="star" />
       )}
     </>
-  
+
   );
 }
 
-const App=()=>{
-    const[id,setId]=useState(1);
-    const reset=()=>setId(id+1);
-    return (
-      <Game key={id} reset={reset}/>
-    );
+const App = () => {
+  const [id, setId] = useState(1);
+  const reset = () => setId(id + 1);
+  return (
+    <Game key={id} reset={reset} />
+  );
 }
 const Game = (props) => {
   // State initialization
-  const [dots,setDots] = useState(utils.random(1,9)); //total dots
+  const [dots, setDots] = useState(utils.random(1, 9)); //total dots
   const [aNums, setANums] = useState(utils.range(1, 9)); //available
   const [cNums, setCNums] = useState([]); //candidate
-  const [secs,setSecs]=useState(15);
+  const [secs, setSecs] = useState(15);
 
-  useEffect(()=>{
-    
-    
-      if(secs>0 && aNums.length>0){
-        const tid=setTimeout(()=>{setSecs(secs-1)},1000);
-        return ()=>clearTimeout(tid);
-      }
-    
+  useEffect(() => {
+
+
+    if (secs > 0 && aNums.length > 0) {
+      const tid = setTimeout(() => { setSecs(secs - 1) }, 1000);
+      return () => clearTimeout(tid);
+    }
+
   });
   //Necessary computations based on state
-  const wNum= utils.sum(cNums)> dots;
-  const gameStatus= aNums.length==0? 'won': secs==0?'lost':'active';
-  
-  const numState=(num)=>{
-    if(!aNums.includes(num)) return 'used';
-    if(cNums.includes(num)) {
-      return wNum ? 'wrong':'candidate';
+  const wNum = utils.sum(cNums) > dots;
+  const gameStatus = aNums.length == 0 ? 'won' : secs == 0 ? 'lost' : 'active';
+
+  const numState = (num) => {
+    if (!aNums.includes(num)) return 'used';
+    if (cNums.includes(num)) {
+      return wNum ? 'wrong' : 'candidate';
     }
     return 'available';
   }
-  const restart=()=>{
-    setDots(utils.random(1,9));
-    setANums(utils.range(1,9));
+  const restart = () => {
+    setDots(utils.random(1, 9));
+    setANums(utils.range(1, 9));
     setCNums([]);
     setSecs(15);
-    
+
 
   };
-  const onNumClick=(num,stat)=>{
-    if(stat==='used' || gameStatus!=='active'){
+  const onNumClick = (num, stat) => {
+    if (stat === 'used' || gameStatus !== 'active') {
       return;
     }
-    const newCandid=(stat==='available')?
-    cNums.concat(num):cNums.filter(n=> n!==num);
-    
-    if(utils.sum(newCandid)!==dots){
+    const newCandid = (stat === 'available') ?
+      cNums.concat(num) : cNums.filter(n => n !== num);
+
+    if (utils.sum(newCandid) !== dots) {
       setCNums(newCandid);
-    }else {
-      const newAvail=aNums.filter(n=>!newCandid.includes(n));
-      setDots(utils.randomSumIn(newAvail,9));
+    } else {
+      const newAvail = aNums.filter(n => !newCandid.includes(n));
+      setDots(utils.randomSumIn(newAvail, 9));
       setANums(newAvail);
       setCNums([]);
-      
+
     }
 
   };
@@ -97,20 +97,20 @@ const Game = (props) => {
       <div className="body">
 
         <div className="left">
-          { gameStatus!=='active'?
-          <PlayAgain restart={props.reset} gameStatus={gameStatus}/> 
-          : <Dot no={dots} /> 
+          {gameStatus !== 'active' ?
+            <PlayAgain restart={props.reset} gameStatus={gameStatus} />
+            : <Dot no={dots} />
           }
-          
-            
+
+
         </div>
         <div className="right">
           {utils.range(1, 9).map(num =>
-            <PickMe count = {num} onNum={onNumClick} stat={numState(num)}/>
+            <PickMe count={num} onNum={onNumClick} stat={numState(num)} />
           )}
         </div>
       </div>
-          <div className="timer">Seconds Remaining: {secs}</div>
+      <div className="timer">Seconds Remaining: {secs}</div>
     </div>
   );
 };
@@ -129,7 +129,7 @@ const utils = {
   sum: arr => arr.reduce((acc, curr) => acc + curr, 0),
 
   // create an array of numbers between min and max (edges included)
-  range: (min, max) => Array.from({ length: max - min + 1 }, (_,i) => min + i),
+  range: (min, max) => Array.from({ length: max - min + 1 }, (_, i) => min + i),
 
   // pick a random number between min and max (edges included)
   random: (min, max) => min + Math.floor(Math.random() * (max - min + 1)),
@@ -153,5 +153,5 @@ const utils = {
   },
 };
 
-export default  App;
+export default App;
 
