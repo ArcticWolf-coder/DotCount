@@ -2,7 +2,7 @@
 A simple React based web game
 Here I am using Function Components of React for the first time
 Reactful init is implemented
-Here the game is about counting dots or stars and picking numbers to sum it up within 10 secs to win the game
+Here the game is about counting dots or stars and picking numbers to sum it up within 15 secs to win the game
 
 
 ```
